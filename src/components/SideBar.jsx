@@ -1,0 +1,75 @@
+import { useState } from 'react'
+
+function SideBar() {
+    const [openIndex, setOpenIndex] = useState(null)
+
+    const opciones = [
+        { titulo: 'Dashboard', url: '/HomeTwo' },
+        { titulo: 'Agregar', url: '/Agregar' },
+        { titulo: 'Presupuesto', url: '' },
+        {
+            titulo: 'Ahorro',
+            url: '',
+            subOpciones: [
+                { titulo: 'Sub 1', url: '' },
+                { titulo: 'Sub 2', url: '' },
+            ]
+        },
+        { titulo: 'Historial', url: '' },
+        { 
+            titulo: 'Estadísticas',
+            url: '',
+            subOpciones: [
+                { titulo: 'Sub 1', url: '' },
+                { titulo: 'Sub 2', url: '' },
+            ]
+        },
+    ]
+
+    const toggleSubmenu = (index) => {
+        setOpenIndex(openIndex === index ? null : index)
+    }
+
+    return (
+        <section className="text-left flex flex-col text-sm">
+            <div className="p-2">
+                <h1 className="text-2xl font-bold">Gastos App</h1>
+                <span className="text-xs">Control de gastos financieros</span>
+            </div>
+
+            <div className="flex flex-col flex-1">
+                {opciones.map((item, index) => (
+                    <div key={index}>
+                        <a
+                            href={item.subOpciones ? undefined : item.url}
+                            onClick={item.subOpciones ? () => toggleSubmenu(index) : undefined}
+                            className="flex justify-between items-center p-2 cursor-pointer"
+                        >
+                            {item.titulo}
+                            {item.subOpciones && (
+                                <span>{openIndex === index ? '▲' : '▼'}</span>
+                            )}
+                        </a>
+
+                        {item.subOpciones && openIndex === index && (
+                            <div className="pl-4">
+                                {item.subOpciones.map((sub, subIndex) => (
+                                    <a key={subIndex} href={sub.url} className="block p-2 text-xs border-l border-gray-400">
+                                        {sub.titulo}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            <div className="mt-auto">
+                <a href="#" className="block p-2">Sistema</a>
+                <a href="#" className="block p-2">Salir</a>
+            </div>
+        </section>
+    )
+}
+
+export default SideBar
