@@ -1,7 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function SideBar() {
     const [openIndex, setOpenIndex] = useState(null)
+
+    const [theme, setTheme] = useState(() => {
+        const savedTheme = localStorage.getItem('theme')
+        if (savedTheme) return savedTheme
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    })
+
+    useEffect(() => {
+        document.documentElement.classList.toggle("dark", theme === "dark")
+        localStorage.setItem("theme", theme)
+    }, [theme])
+
+    const toggleTheme = () => {
+        setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"))
+    }
 
     const opciones = [
         { titulo: 'Dashboard', url: '/HomeTwo' },
@@ -31,7 +46,7 @@ function SideBar() {
     }
 
     return (
-        <section className="text-left flex flex-col text-sm">
+        <section className="text-left flex flex-col text-sm bg-white dark:bg-gray-900 dark:text-white min-h-screen p-2">
             <div className="p-2">
                 <h1 className="text-2xl font-bold">Gastos App</h1>
                 <span className="text-xs">Control de gastos financieros</span>
@@ -65,7 +80,7 @@ function SideBar() {
             </div>
 
             <div className="mt-auto">
-                <a href="#" className="block p-2">Sistema</a>
+                <p onClick={toggleTheme} className="block p-2 cursor-pointer text-black dark:text-white">{theme === "light" ? "Blanco" : "Oscuro"}</p>
                 <a href="#" className="block p-2">Salir</a>
             </div>
         </section>
