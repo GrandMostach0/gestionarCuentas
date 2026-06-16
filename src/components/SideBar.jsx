@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function SideBar() {
+    const navigate = useNavigate()
     const [openIndex, setOpenIndex] = useState(null)
 
     const [theme, setTheme] = useState(() => {
@@ -81,7 +83,7 @@ function SideBar() {
 
             <div className="mt-auto">
                 <p onClick={toggleTheme} className="block p-2 cursor-pointer text-black dark:text-white">{theme === "light" ? "Blanco" : "Oscuro"}</p>
-                <a href="#" className="block p-2">Salir</a>
+                <a href="/" onClick={() => {sessionStorage.removeItem('app_session_active'); localStorage.removeItem('app_pin'); navigate('/') }} className="block p-2 cursor-pointer">Salir</a>
             </div>
         </section>
     )
