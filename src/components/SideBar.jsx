@@ -20,9 +20,10 @@ function SideBar() {
         setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"))
     }
 
+    // 1. 👇 CORREGIDO: Quitamos las '/' iniciales para que sean rutas relativas al dashboard
     const opciones = [
-        { titulo: 'Dashboard', url: '/HomeTwo' },
-        { titulo: 'Agregar', url: '/Agregar' },
+        { titulo: 'Dashboard', url: 'HomeTwo' },
+        { titulo: 'Agregar', url: 'Agregar' },
         { titulo: 'Presupuesto', url: '' },
         {
             titulo: 'Ahorro',
@@ -47,6 +48,11 @@ function SideBar() {
         setOpenIndex(openIndex === index ? null : index)
     }
 
+    // 2. 👇 Nueva función manejadora para los clicks del menú sin usar href nativos
+    const handleNavigation = (url) => {
+        if (url) navigate(url);
+    }
+
     return (
         <section className="text-left flex flex-col text-sm bg-white dark:bg-gray-900 dark:text-white min-h-screen p-2">
             <div className="p-2">
@@ -57,23 +63,27 @@ function SideBar() {
             <div className="flex flex-col flex-1">
                 {opciones.map((item, index) => (
                     <div key={index}>
-                        <a
-                            href={item.subOpciones ? undefined : item.url}
-                            onClick={item.subOpciones ? () => toggleSubmenu(index) : undefined}
-                            className="flex justify-between items-center p-2 cursor-pointer"
+                        {/* 3. 👇 CORREGIDO: Cambiamos 'a' por 'button' o un div con onClick controlado */}
+                        <button
+                            onClick={item.subOpciones ? () => toggleSubmenu(index) : () => handleNavigation(item.url)}
+                            className="flex justify-between items-center p-2 cursor-pointer w-full text-left"
                         >
-                            {item.titulo}
+                            <span>{item.titulo}</span>
                             {item.subOpciones && (
                                 <span>{openIndex === index ? '▲' : '▼'}</span>
                             )}
-                        </a>
+                        </button>
 
                         {item.subOpciones && openIndex === index && (
                             <div className="pl-4">
                                 {item.subOpciones.map((sub, subIndex) => (
-                                    <a key={subIndex} href={sub.url} className="block p-2 text-xs border-l border-gray-400">
+                                    <button 
+                                        key={subIndex} 
+                                        onClick={() => handleNavigation(sub.url)} 
+                                        className="block p-2 text-xs border-l border-gray-400 w-full text-left"
+                                    >
                                         {sub.titulo}
-                                    </a>
+                                    </button>
                                 ))}
                             </div>
                         )}
@@ -82,11 +92,23 @@ function SideBar() {
             </div>
 
             <div className="mt-auto">
-                <p onClick={toggleTheme} className="block p-2 cursor-pointer text-black dark:text-white">{theme === "light" ? "Blanco" : "Oscuro"}</p>
-                <a href="/" onClick={() => {sessionStorage.removeItem('app_session_active'); localStorage.removeItem('app_pin'); navigate('/') }} className="block p-2 cursor-pointer">Salir</a>
+                <p onClick={toggleTheme} className="block p-2 cursor-pointer text-black dark:text-white">
+                    {theme === "light" ? "Blanco" : "Oscuro"}
+                </p>
+                
+                {/* 4. 👇 CORREGIDO: Botón de salir limpio, quitamos localStorage.removeItem('app_pin') si deseas conservar el pin creado */}
+                <button 
+                    onClick={() => {
+                        sessionStorage.removeItem('app_session_active'); 
+                        navigate('/', { replace: true }); 
+                    }} 
+                    className="block p-2 cursor-pointer text-left w-full text-red-500 hover:text-red-400 font-medium"
+                >
+                    Salir
+                </button>
             </div>
         </section>
     )
 }
 
-export default SideBar
+export default SideBar;
